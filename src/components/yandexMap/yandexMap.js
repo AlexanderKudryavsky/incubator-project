@@ -1,11 +1,11 @@
-import React from 'react'
+import React, {useState} from 'react'
 import style from './yandexMap.module.css'
 import {Clusterer, GeolocationControl, Map, Placemark, SearchControl, YMaps, ZoomControl} from 'react-yandex-maps'
 import {AddPlacemarkForm} from "../AddPlacemarkForm/AddPlacemarkForm";
 
 export const YandexMap = () => {
 
-    const startStateMapZoom = {center: [42.50, -41.74], zoom: 3} // Minsk
+    let [startStateMapZoom, setStartStateMapZoom] = useState({center: [42.50, -27.74], zoom: 3}) // Minsk
 
     const coordinates = [
         {
@@ -48,12 +48,59 @@ export const YandexMap = () => {
         console.log('Clicked')
     }
 
+    const [placemarkObjects, setPlacemarkObjects] = useState(coordinates);
+    const [map, setMap] = useState({});
+    const [panelOpen, setPanelOpen] = useState(false);
+    const [newPlacemarkCoordinates, setNewPlacemarkCoordinates] = useState([]);
+
+
+    const openPanelControl = () => {
+        if (!panelOpen) {
+            setPanelOpen(!panelOpen);
+        }
+    }
+
+    const addPlacemarkCoordinates = (e) => {
+        openPanelControl();
+        const position = e.get('coords');
+        setNewPlacemarkCoordinates(position)
+    }
+
+    const addPlacemark = (coordinates, country, city, title, description, workTime, rating, social) => {
+        let newPlacemark = {
+            coordinate: coordinates,
+            country: country,
+            city: city,
+            logo: null,
+            title: title,
+            description: description,
+            workTime: workTime,
+            rating: {
+                star: 5
+            },
+            social: [
+                {vk: ''},
+                {fb: ''},
+                {ig: ''}
+            ]
+        }
+        let newArray = [...placemarkObjects, newPlacemark]
+        setPlacemarkObjects(newArray);
+        setStartStateMapZoom({center: map.getCenter(), zoom: 3})
+
+    }
+
+
     return (
         <YMaps enterprise
                query={{apikey: '1c7f4567-d722-4829-8b8c-6dae4d41a40c'}}>
 
             <Map state={startStateMapZoom}
-                 className={`${style.container} ${style.yMaps_layers_pane}`}>
+                 className={`${style.container} ${style.yMaps_layers_pane}`}
+                 instanceRef={(map) => setMap(map)}
+                 onContextMenu={addPlacemarkCoordinates}
+
+            >
 
                 <Clusterer
                     options={{
@@ -62,9 +109,9 @@ export const YandexMap = () => {
                     }}>
 
                     {/* applied placemarks */}
-                    {coordinates.map((point, index) => <Placemark key={index}
-                                                          geometry={point.coordinate}
-                                                          onClick={clickPlacemark}/>)}
+                    {placemarkObjects.map((point, index) => <Placemark key={index}
+                                                                       geometry={point.coordinate}
+                                                                       onClick={clickPlacemark}/>)}
 
                 </Clusterer>
                 {/* control buttons */}
@@ -72,7 +119,14 @@ export const YandexMap = () => {
                 <GeolocationControl options={{float: 'left'}}/>
                 <SearchControl options={{float: 'right'}}/>
             </Map>
-            <AddPlacemarkForm/>
+            <AddPlacemarkForm
+                panelOpen={panelOpen}
+                openPanelControl={setPanelOpen}
+                addPlacemark={addPlacemark}
+                newPlacemarkCoordinates={newPlacemarkCoordinates}
+                setNewPlacemarkCoordinates = {setNewPlacemarkCoordinates}
+
+            />
         </YMaps>
     )
 }
