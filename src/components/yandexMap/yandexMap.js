@@ -1,6 +1,7 @@
 import React from 'react'
 import style from './yandexMap.module.css'
 import {Clusterer, GeolocationControl, Map, Placemark, SearchControl, YMaps, ZoomControl} from 'react-yandex-maps'
+import {AddPlacemarkForm} from "../AddPlacemarkForm/AddPlacemarkForm";
 
 export const YandexMap = () => {
 
@@ -71,6 +72,7 @@ export const YandexMap = () => {
                 <GeolocationControl options={{float: 'left'}}/>
                 <SearchControl options={{float: 'right'}}/>
             </Map>
+            <AddPlacemarkForm/>
         </YMaps>
     )
 }
