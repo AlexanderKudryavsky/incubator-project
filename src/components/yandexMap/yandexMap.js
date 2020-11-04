@@ -1,6 +1,7 @@
 import React from 'react'
 import style from './yandexMap.module.css'
 import {Map, Placemark, YMaps} from 'react-yandex-maps'
+import {LeftCards} from "../LeftCards/LeftCards";
 
 export const YandexMap = () => {
 
@@ -20,6 +21,7 @@ export const YandexMap = () => {
 
     return <YMaps>
         <div>
+            <LeftCards/>
             <Map className={`${style.container} ${style.yMaps_layers_pane}`}
                  state={startStateMapZoom}>
                 {coordinates.map(point => <Placemark geometry={point}/>)}
