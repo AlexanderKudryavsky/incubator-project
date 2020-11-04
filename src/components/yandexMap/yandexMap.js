@@ -1,31 +1,77 @@
 import React from 'react'
 import style from './yandexMap.module.css'
-import {Map, Placemark, YMaps} from 'react-yandex-maps'
 import {LeftCards} from "../LeftCards/LeftCards";
+import {Clusterer, GeolocationControl, Map, Placemark, SearchControl, YMaps, ZoomControl} from 'react-yandex-maps'
 
 export const YandexMap = () => {
 
-    const startStateMapZoom = {center: [42.50, -27.74], zoom: 3} // Minsk
+    const startStateMapZoom = {center: [42.50, -41.74], zoom: 3} // Minsk
 
     const coordinates = [
-        [53.91, 27.60], // it-incubator
-        // some country...
-        [59.94, 30.32],
-        [52.23, 21.06],
-        [41.89, 12.50],
-        [52.50, 13.39],
-        [39.48, -8.44],
-        [25.79, -80.29],
-        [49.25, -123.12]
+        {
+            coordinate: [53.917501, 27.604851],
+            country: 'Belarus',
+            city: 'Minsk',
+            logo: null,
+            title: 'IT-KAMASUTRA',
+            description: 'Some info about school...',
+            workTime: '09:00 - 21:00',
+            rating: {
+                star: 5
+            },
+            social: [
+                {vk: ''},
+                {fb: ''},
+                {ig: ''}
+            ]
+        },
+        {
+            coordinate: [53.905044, 27.540433],
+            country: 'Belarus',
+            city: 'Minsk',
+            logo: null,
+            title: 'IT-ACADEMY',
+            description: 'Some info about school...',
+            workTime: '09:00 - 21:00',
+            rating: {
+                star: 1 // фуфуфу...))
+            },
+            social: [
+                {vk: ''},
+                {fb: ''},
+                {ig: ''}
+            ]
+        }
     ]
 
-    return <YMaps>
-        <div>
+    const clickPlacemark = () => {
+        console.log('Clicked')
+    }
+
+    return (
+        <YMaps enterprise
+               query={{apikey: '1c7f4567-d722-4829-8b8c-6dae4d41a40c'}}>
             <LeftCards/>
-            <Map className={`${style.container} ${style.yMaps_layers_pane}`}
-                 state={startStateMapZoom}>
-                {coordinates.map(point => <Placemark geometry={point}/>)}
+            <Map state={startStateMapZoom}
+                 className={`${style.container} ${style.yMaps_layers_pane}`}>
+
+                <Clusterer
+                    options={{
+                        preset: 'islands#invertedVioletClusterIcons',
+                        groupByCoordinates: false
+                    }}>
+
+                    {/* applied placemarks */}
+                    {coordinates.map((point, index) => <Placemark key={index}
+                                                          geometry={point.coordinate}
+                                                          onClick={clickPlacemark}/>)}
+
+                </Clusterer>
+                {/* control buttons */}
+                <ZoomControl options={{float: 'right'}}/>
+                <GeolocationControl options={{float: 'left'}}/>
+                <SearchControl options={{float: 'right'}}/>
             </Map>
-        </div>
-    </YMaps>
+        </YMaps>
+    )
 }
