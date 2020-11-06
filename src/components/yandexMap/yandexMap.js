@@ -54,11 +54,8 @@ export const YandexMap = () => {
     const [newPlacemarkCoordinates, setNewPlacemarkCoordinates] = useState([]);
 
 
-    const openPanelControl = () => {
-        if (!panelOpen) {
-            setPanelOpen(!panelOpen);
-        }
-    }
+    const openPanelControl = () => !panelOpen && setPanelOpen(!panelOpen);
+
 
     const addPlacemarkCoordinates = (e) => {
         openPanelControl();

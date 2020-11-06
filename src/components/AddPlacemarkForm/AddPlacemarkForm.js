@@ -1,20 +1,18 @@
-import React, {Fragment, useState} from 'react'
+import React, {useState} from 'react'
 import {makeStyles} from "@material-ui/core/styles";
-import {MuiPickersUtilsProvider, TimePicker} from '@material-ui/pickers';
-import {BrowserRouter, Switch, Route, Link} from 'react-router-dom'
-import {Drawer, List, ListItem, ListItemIcon,} from "@material-ui/core";
+import {BrowserRouter, Link} from 'react-router-dom'
+import {Drawer, List, ListItem,} from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import TextareaAutosize from "@material-ui/core/TextareaAutosize";
 import ListItemText from "@material-ui/core/ListItemText";
-import {KeyboardTimePicker} from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
+import Button from "@material-ui/core/Button";
 
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(({palette}) => ({
     drawerPaper: {width: 'inherit'},
     link: {
         textDecoration: 'none',
-        color: theme.palette.text.primary,
+        color: palette.text.primary,
     },
     hide: {display: 'none'},
 
@@ -29,28 +27,26 @@ export function AddPlacemarkForm(props) {
     const [title, setTitle] = useState('');
     const [workTime, setWorkTime] = useState('');
 
-    // const [selectedDate, handleDateChange] = useState(new Date());
-    // const [selectedDate2, handleDateChange2] = useState(new Date());
 
     let coordinates = props.newPlacemarkCoordinates;
 
     const onChangeCity = (e) => {
-        let value = e.target.value;
+        const {value} = e.target;
         setCity(value);
     }
 
     const onChangeCountry = (e) => {
-        let value = e.target.value;
+        const {value} = e.target;
         setCountry(value);
     }
 
     const onChangeTitle = (e) => {
-        let value = e.target.value;
+        const {value} = e.target;
         setTitle(value);
     }
 
     const onChangeWorkTime = (e) => {
-        let value = e.target.value;
+        const {value} = e.target;
         setWorkTime(value);
     }
 
@@ -76,7 +72,6 @@ export function AddPlacemarkForm(props) {
 
 
     return (
-        <BrowserRouter>
             <div style={{display: 'flex'}}>
                 <Drawer
                     style={{width: '250px'}}
@@ -126,23 +121,6 @@ export function AddPlacemarkForm(props) {
                             Время работы
                         </ListItem>
                         <ListItem>
-                            {/*<MuiPickersUtilsProvider utils={DateFnsUtils}>*/}
-                            {/*    <TimePicker*/}
-                            {/*        clearable*/}
-                            {/*        ampm={false}*/}
-                            {/*        label="С"*/}
-                            {/*        value={selectedDate}*/}
-                            {/*        onChange={handleDateChange}*/}
-                            {/*    />*/}
-                            {/*    <TimePicker*/}
-                            {/*        clearable*/}
-                            {/*        ampm={false}*/}
-                            {/*        label="До"*/}
-                            {/*        value={selectedDate2}*/}
-                            {/*        onChange={handleDateChange2}*/}
-                            {/*    />*/}
-                            {/*</MuiPickersUtilsProvider>*/}
-
                             <TextField value={workTime} onChange={onChangeWorkTime} id="outlined-basic"
                                        label="Work-time" variant="outlined"/>
                         </ListItem>
@@ -156,15 +134,13 @@ export function AddPlacemarkForm(props) {
 
                             />
                         </ListItem>
-                        <Link to={'/'} className={classes.link}>
                             <ListItem button onClick={handleDrawerOpen}>
-                                <ListItemText>Ok</ListItemText>
+                                <Button>ok</Button>
                             </ListItem>
-                        </Link>
                     </List>
                 </Drawer>
             </div>
-        </BrowserRouter>
+
 
     )
 }
