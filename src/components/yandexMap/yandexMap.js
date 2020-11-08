@@ -1,12 +1,20 @@
-import React, {useState} from 'react'
+import React, {useRef, useState} from 'react'
+import {
+    Clusterer, GeolocationControl,
+    Map,
+    Placemark,
+    SearchControl,
+    YMaps,
+    ZoomControl
+} from 'react-yandex-maps'
+import {AddPlacemarkForm} from '../AddPlacemarkForm/AddPlacemarkForm'
 import style from './yandexMap.module.css'
-import {LeftCards} from "../LeftCards/LeftCards";
-import {Clusterer, GeolocationControl, Map, Placemark, SearchControl, YMaps, ZoomControl} from 'react-yandex-maps'
-import {AddPlacemarkForm} from "../AddPlacemarkForm/AddPlacemarkForm";
 
 export const YandexMap = () => {
 
-    let [startStateMapZoom, setStartStateMapZoom] = useState({center: [42.50, -27.74], zoom: 3}) // Minsk
+    const modules = ['layout.ImageWithContent', 'GeoObjectCollection', 'Placemark']
+
+    const [startStateMapZoom, setStartStateMapZoom] = useState({center: [42.50, -27.74], zoom: 3}) // Minsk
 
     const coordinates = [
         {
@@ -49,22 +57,20 @@ export const YandexMap = () => {
         console.log('Clicked')
     }
 
-    const [placemarkObjects, setPlacemarkObjects] = useState(coordinates);
-    const [map, setMap] = useState({});
-    const [panelOpen, setPanelOpen] = useState(false);
-    const [newPlacemarkCoordinates, setNewPlacemarkCoordinates] = useState([]);
+    const [map, setMap] = useState({})
+    const [panelOpen, setPanelOpen] = useState(false)
+    const [placemarkObjects, setPlacemarkObjects] = useState(coordinates)
+    const [newPlacemarkCoordinates, setNewPlacemarkCoordinates] = useState([])
 
-
-    const openPanelControl = () => !panelOpen && setPanelOpen(!panelOpen);
-
+    const openPanelControl = () => !panelOpen && setPanelOpen(!panelOpen)
 
     const addPlacemarkCoordinates = (e) => {
-        openPanelControl();
-        const position = e.get('coords');
+        openPanelControl()
+        const position = e.get('coords')
         setNewPlacemarkCoordinates(position)
     }
 
-    const addPlacemark = (coordinates, country, city, title, description, workTime, rating, social) => {
+    const addPlacemark = (coordinates, country, city, title, description, workTime) => {
         let newPlacemark = {
             coordinate: coordinates,
             country: country,
@@ -83,48 +89,131 @@ export const YandexMap = () => {
             ]
         }
         let newArray = [...placemarkObjects, newPlacemark]
-        setPlacemarkObjects(newArray);
+        setPlacemarkObjects(newArray)
         setStartStateMapZoom({center: map.getCenter(), zoom: 3})
-
     }
 
+    const dataConvert = (routes) => {
+        let features = []
+        routes &&
+        routes.map((route) => {
+            const lat = route.coordinate[0]
+            const lon = route.coordinate[1]
+            let tmpObj = {
+                type: 'Feature',
+                id: route.title,
+                route: route,
+                geometry: {
+                    type: 'Point',
+                    coordinates: [lat, lon]
+                }
+            }
+            return features.push(tmpObj)
+        })
+        return features
+    }
+
+    const ymaps = useRef(null)
+
+    class CustomSearchProvider {
+        constructor(points) {
+            this.points = points
+        }
+
+        geocode(request, options) {
+            let deferred = ymaps.current && ymaps.current.vow.defer()
+            let geoObjects = ymaps.current && new ymaps.current.GeoObjectCollection()
+
+            let offset = options.skip || 0
+            let limit = options.results || 20
+
+            let points = []
+            for (let i = 0, l = this.points.length; i < l; i++) {
+                let point = this.points[i]
+
+                if (point.title.toLowerCase().indexOf(request.toLowerCase()) !== -1) {
+                    points.push(point)
+                }
+            }
+
+            // При формировании ответа можно учитывать offset и limit.
+            points = points.splice(offset, limit)
+
+            // Добавляем точки в результирующую коллекцию.
+            for (let i = 0, l = points.length; i < l; i++) {
+                let point = points[i],
+                    coordinates = point.coordinates,
+                    routeId = point.title
+
+                geoObjects.add(
+                    new ymaps.current.Placemark(coordinates, {
+                        name: routeId,
+                        description: `${point.country}, ${point.city}`,
+                        balloonContentBody: '<p>' + routeId + '</p>',
+                        boundedBy: [coordinates, coordinates]
+                    })
+                )
+            }
+
+            deferred.resolve({
+                // Геообъекты поисковой выдачи.
+                geoObjects,
+                // Метаинформация ответа.
+                metaData: {
+                    geocoder: {
+                        // Строка обработанного запроса.
+                        request,
+                        // Количество найденных результатов.
+                        found: geoObjects.getLength(),
+                        // Количество возвращенных результатов.
+                        results: limit,
+                        // Количество пропущенных результатов.
+                        skip: offset
+                    }
+                }
+            })
+            // Возвращаем объект-обещание.
+            return deferred.promise()
+        }
+    }
 
     return (
-        <YMaps enterprise
-               query={{apikey: '1c7f4567-d722-4829-8b8c-6dae4d41a40c'}}>
-            <LeftCards/>
+        <YMaps>
             <Map state={startStateMapZoom}
-                 className={`${style.container} ${style.yMaps_layers_pane}`}
+                 className={style.container}
+                 modules={modules}
+                 onLoad={(api) => ymaps.current = api}
+                 features={dataConvert(coordinates)}
                  instanceRef={(map) => setMap(map)}
-                 onContextMenu={addPlacemarkCoordinates}
-
-            >
-
+                 onContextMenu={addPlacemarkCoordinates}>
+                <SearchControl options={{
+                    float: 'right',
+                    maxWidth: 190,
+                    noPlacemark: true,
+                    provider: new CustomSearchProvider(coordinates),
+                    resultsPerPage: 5
+                }}/>
+                <ZoomControl options={{float: 'right'}}/>
+                <AddPlacemarkForm
+                    panelOpen={panelOpen}
+                    openPanelControl={setPanelOpen}
+                    addPlacemark={addPlacemark}
+                    newPlacemarkCoordinates={newPlacemarkCoordinates}
+                    setNewPlacemarkCoordinates={setNewPlacemarkCoordinates}/>
                 <Clusterer
                     options={{
                         preset: 'islands#invertedVioletClusterIcons',
                         groupByCoordinates: false
                     }}>
-
-                    {/* applied placemarks */}
-                    {placemarkObjects.map((point, index) => <Placemark key={index}
-                                                                       geometry={point.coordinate}
-                                                                       onClick={clickPlacemark}/>)}
-
+                    {placemarkObjects.map((point, index) => {
+                        return <Placemark key={index}
+                                          geometry={point.coordinate}
+                                          onClick={clickPlacemark}/>
+                    })}
                 </Clusterer>
-                {/* control buttons */}
-                <ZoomControl options={{float: 'right'}}/>
-                <GeolocationControl options={{float: 'left'}}/>
-                <SearchControl options={{float: 'right'}}/>
+                <GeolocationControl/>
+                {/*<LeftCards coordinates={coordinates}/>*/}
             </Map>
-            <AddPlacemarkForm
-                panelOpen={panelOpen}
-                openPanelControl={setPanelOpen}
-                addPlacemark={addPlacemark}
-                newPlacemarkCoordinates={newPlacemarkCoordinates}
-                setNewPlacemarkCoordinates = {setNewPlacemarkCoordinates}
-
-            />
         </YMaps>
     )
 }
