@@ -1,6 +1,6 @@
 import React, {useRef, useState} from 'react'
 import {
-    Clusterer,
+    Clusterer, GeolocationControl,
     Map,
     Placemark,
     SearchControl,
@@ -9,7 +9,6 @@ import {
 } from 'react-yandex-maps'
 import {AddPlacemarkForm} from '../AddPlacemarkForm/AddPlacemarkForm'
 import style from './yandexMap.module.css'
-// import {LeftCards} from '../LeftCards/LeftCards'
 
 export const YandexMap = () => {
 
@@ -71,7 +70,7 @@ export const YandexMap = () => {
         setNewPlacemarkCoordinates(position)
     }
 
-    const addPlacemark = (coordinates, country, city, title, description, workTime, rating, social) => {
+    const addPlacemark = (coordinates, country, city, title, description, workTime) => {
         let newPlacemark = {
             coordinate: coordinates,
             country: country,
@@ -212,6 +211,7 @@ export const YandexMap = () => {
                                           onClick={clickPlacemark}/>
                     })}
                 </Clusterer>
+                <GeolocationControl/>
                 {/*<LeftCards coordinates={coordinates}/>*/}
             </Map>
         </YMaps>
