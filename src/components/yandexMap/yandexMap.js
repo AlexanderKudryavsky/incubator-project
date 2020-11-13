@@ -94,7 +94,7 @@ export const YandexMap = () => {
         }
         let newArray = [...placemarkObjects, newPlacemark]
         setPlacemarkObjects(newArray)
-        setStartStateMapZoom({center: map.getCenter(), zoom: 3})
+        setStartStateMapZoom({center: map.current.getCenter(), zoom: 3})
     }
 
     const dataConvert = (routes) => {
@@ -188,7 +188,7 @@ export const YandexMap = () => {
                  modules={modules}
                  onLoad={(api) => ymaps.current = api}
                  features={dataConvert(coordinates)}
-                 instanceRef={(map) => setMap(map)}
+                 instanceRef={map}
                  onContextMenu={addPlacemarkCoordinates}>
                 <SearchControl options={{
                     float: 'right',
