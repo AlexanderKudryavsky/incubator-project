@@ -1,11 +1,11 @@
-import React, {useState} from 'react'
+import React, {useRef, useState} from 'react'
 import style from './yandexMap.module.css'
 import {LeftCards} from "../LeftCards/LeftCards";
 import {Clusterer, GeolocationControl, Map, Placemark, SearchControl, YMaps, ZoomControl} from 'react-yandex-maps'
 
 export const YandexMap = () => {
 
-    const [startStateMapZoom, setStartStateZoom] = useState({center: [42.50, -41.74], zoom: 3}) // Minsk
+    const startStateMapZoom = useState({center: [42.50, -41.74], zoom: 3}) // Minsk
 
     const coordinates = [
         {
@@ -48,8 +48,13 @@ export const YandexMap = () => {
         console.log('Clicked')
     }
 
+    const map = useRef()
+
     const onClickLeftCards = (coordinates) => {
-        return setStartStateZoom({...startStateMapZoom, center: coordinates, zoom: 14})
+        console.log(map.current.panTo)
+        map.current.panTo(coordinates, {flying: 1})
+
+
     }
 
 
@@ -58,7 +63,11 @@ export const YandexMap = () => {
                query={{apikey: '1c7f4567-d722-4829-8b8c-6dae4d41a40c'}}>
             <LeftCards state={coordinates} onClickLeftCards={onClickLeftCards}/>
             <Map state={startStateMapZoom}
-                 className={`${style.container} ${style.yMaps_layers_pane}`}>
+                 className={`${style.container} ${style.yMaps_layers_pane}`}
+                 options={{flying: 1}}
+                 instanceRef={map}
+
+            >
 
 
                 <Clusterer
