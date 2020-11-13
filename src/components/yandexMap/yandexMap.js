@@ -59,6 +59,13 @@ export const YandexMap = () => {
     const [newPlacemarkCoordinates, setNewPlacemarkCoordinates] = useState([])
     const map = useRef()
 
+    const onClickLeftCards = (coordinates) => {
+        console.log(map.current.panTo)
+        map.current.panTo(coordinates, {flying: 1})
+
+
+    }
+
     const openPanelControl = () => !panelOpen && setPanelOpen(!panelOpen)
 
     const addPlacemarkCoordinates = (e) => {
@@ -66,7 +73,6 @@ export const YandexMap = () => {
         const position = e.get('coords')
         setNewPlacemarkCoordinates(position)
     }
-
 
     const addPlacemark = (coordinates, country, city, title, description, workTime) => {
         let newPlacemark = {
@@ -175,24 +181,15 @@ export const YandexMap = () => {
         }
     }
 
-
-    const onClickLeftCards = (coordinates) => {
-        map.current.panTo(coordinates, {flying: 1})
-
-
-    }
-
-
     return (
-        <YMaps enterprise query={{apikey: '1c7f4567-d722-4829-8b8c-6dae4d41a40c'}}>
+        <YMaps>
             <Map state={startStateMapZoom}
                  className={style.container}
                  modules={modules}
                  onLoad={(api) => ymaps.current = api}
                  features={dataConvert(coordinates)}
-                 instanceRef={map}
+                 instanceRef={(map) => setMap(map)}
                  onContextMenu={addPlacemarkCoordinates}>
-
                 <SearchControl options={{
                     float: 'right',
                     maxWidth: 190,
@@ -200,7 +197,6 @@ export const YandexMap = () => {
                     provider: new CustomSearchProvider(coordinates),
                     resultsPerPage: 5
                 }}/>
-                <LeftCards state={coordinates} onClickLeftCards={onClickLeftCards}/>
                 <ZoomControl options={{float: 'right'}}/>
                 <AddPlacemarkForm
                     panelOpen={panelOpen}
@@ -208,22 +204,19 @@ export const YandexMap = () => {
                     addPlacemark={addPlacemark}
                     newPlacemarkCoordinates={newPlacemarkCoordinates}
                     setNewPlacemarkCoordinates={setNewPlacemarkCoordinates}/>
-
-
                 <Clusterer
                     options={{
                         preset: 'islands#invertedVioletClusterIcons',
                         groupByCoordinates: false
                     }}>
-
                     {placemarkObjects.map((point, index) => {
                         const schoolBalloon =
                             `<div id="menu">\
-                                        <h3 class="titleInfo">${point.title}</h3>\
-                                    <div>Address: ${point.city}, ${point.country}</div>
-                                    <div>Mode: ${point.workTime}</div>
-                                    <div>${point.description}</div>
-                                </div>`
+                                            <h3 class="titleInfo">${point.title}</h3>\
+                                        <div>Address: ${point.city}, ${point.country}</div>
+                                        <div>Mode: ${point.workTime}</div>
+                                        <div>${point.description}</div>
+                                    </div>`
                         return <Placemark key={index}
                                           properties={{
                                               balloonContent: [`${schoolBalloon}`]
@@ -233,8 +226,7 @@ export const YandexMap = () => {
                     })}
                 </Clusterer>
                 <GeolocationControl/>
-                {/*<LeftCards coordinates={coordinates}/>*/}
-
+                <LeftCards state={coordinates} onClickLeftCards={onClickLeftCards}/>
             </Map>
         </YMaps>
     )
