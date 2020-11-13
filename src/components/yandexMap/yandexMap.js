@@ -1,11 +1,11 @@
-import React from 'react'
+import React, {useState} from 'react'
 import style from './yandexMap.module.css'
 import {LeftCards} from "../LeftCards/LeftCards";
 import {Clusterer, GeolocationControl, Map, Placemark, SearchControl, YMaps, ZoomControl} from 'react-yandex-maps'
 
 export const YandexMap = () => {
 
-    const startStateMapZoom = {center: [42.50, -41.74], zoom: 3} // Minsk
+    const [startStateMapZoom, setStartStateZoom] = useState({center: [42.50, -41.74], zoom: 3}) // Minsk
 
     const coordinates = [
         {
@@ -48,12 +48,18 @@ export const YandexMap = () => {
         console.log('Clicked')
     }
 
+    const onClickLeftCards = (coordinates) => {
+        return setStartStateZoom({...startStateMapZoom, center: coordinates, zoom: 14})
+    }
+
+
     return (
         <YMaps enterprise
                query={{apikey: '1c7f4567-d722-4829-8b8c-6dae4d41a40c'}}>
-            <LeftCards/>
+            <LeftCards state={coordinates} onClickLeftCards={onClickLeftCards}/>
             <Map state={startStateMapZoom}
                  className={`${style.container} ${style.yMaps_layers_pane}`}>
+
 
                 <Clusterer
                     options={{
@@ -61,10 +67,24 @@ export const YandexMap = () => {
                         groupByCoordinates: false
                     }}>
 
+
                     {/* applied placemarks */}
-                    {coordinates.map((point, index) => <Placemark key={index}
-                                                          geometry={point.coordinate}
-                                                          onClick={clickPlacemark}/>)}
+                    {coordinates.map((point, index) => {
+                        const schoolBalloon =
+                            `<div id="menu">\
+                                            <h3 class="titleInfo">${point.title}</h3>\
+                                        <div>Address: ${point.city}, ${point.country}</div>
+                                        <div>Mode: ${point.workTime}</div>
+                                        <div>${point.description}</div>
+                                    </div>`
+                        return <Placemark key={index}
+                                          properties={{
+                                              balloonContent: [`${schoolBalloon}`]
+                                          }}
+                                          modules={['geoObject.addon.balloon', 'geoObject.addon.hint']}
+                                          geometry={point.coordinate}
+                                          onClick={clickPlacemark}/>
+                    })}
 
                 </Clusterer>
                 {/* control buttons */}
