@@ -9,10 +9,13 @@ import {
 } from 'react-yandex-maps'
 import {AddPlacemarkForm} from '../AddPlacemarkForm/AddPlacemarkForm'
 import style from './yandexMap.module.css'
+import {LeftCards} from "../LeftCards/LeftCards";
 
 export const YandexMap = () => {
 
-    const startStateMapZoom = {center: [42.50, -41.74], zoom: 3} // Minsk
+    const modules = ['layout.ImageWithContent', 'GeoObjectCollection', 'Placemark']
+
+    const [startStateMapZoom, setStartStateMapZoom] = useState({center: [42.50, -27.74], zoom: 3}) // Minsk
 
     const coordinates = [
         {
@@ -51,24 +54,17 @@ export const YandexMap = () => {
         }
     ]
 
-    const clickPlacemark = () => {
-        console.log('Clicked')
-    }
-
-    const mapp = useRef()
-
-    const onClickLeftCards = (coordinates) => {
-        console.log(mapp.current.panTo)
-        mapp.current.panTo(coordinates, {flying: 1})
-
-
-    }
-
-
-    const [map, setMap] = useState({})
     const [panelOpen, setPanelOpen] = useState(false)
     const [placemarkObjects, setPlacemarkObjects] = useState(coordinates)
     const [newPlacemarkCoordinates, setNewPlacemarkCoordinates] = useState([])
+    const map = useRef()
+
+    const onClickLeftCards = (coordinates) => {
+        console.log(map.current.panTo)
+        map.current.panTo(coordinates, {flying: 1})
+
+
+    }
 
     const openPanelControl = () => !panelOpen && setPanelOpen(!panelOpen)
 
@@ -98,7 +94,7 @@ export const YandexMap = () => {
         }
         let newArray = [...placemarkObjects, newPlacemark]
         setPlacemarkObjects(newArray)
-        setStartStateMapZoom({center: map.getCenter(), zoom: 3})
+        setStartStateMapZoom({center: map.current.getCenter(), zoom: 3})
     }
 
     const dataConvert = (routes) => {
@@ -186,22 +182,13 @@ export const YandexMap = () => {
     }
 
     return (
-        <YMaps enterprise
-               query={{apikey: '1c7f4567-d722-4829-8b8c-6dae4d41a40c'}}>
-            <LeftCards state={coordinates} onClickLeftCards={onClickLeftCards}/>
+        <YMaps>
             <Map state={startStateMapZoom}
-                 className={`${style.container} ${style.yMaps_layers_pane}`}
-                 options={{flying: 1}}
-                 instanceRef={mapp}
-
-            >
-
-
                  className={style.container}
                  modules={modules}
                  onLoad={(api) => ymaps.current = api}
                  features={dataConvert(coordinates)}
-                 instanceRef={(map) => setMap(map)}
+                 instanceRef={map}
                  onContextMenu={addPlacemarkCoordinates}>
                 <SearchControl options={{
                     float: 'right',
@@ -222,10 +209,7 @@ export const YandexMap = () => {
                         preset: 'islands#invertedVioletClusterIcons',
                         groupByCoordinates: false
                     }}>
-
-
-                    {/* applied placemarks */}
-                    {coordinates.map((point, index) => {
+                    {placemarkObjects.map((point, index) => {
                         const schoolBalloon =
                             `<div id="menu">\
                                             <h3 class="titleInfo">${point.title}</h3>\
@@ -238,20 +222,11 @@ export const YandexMap = () => {
                                               balloonContent: [`${schoolBalloon}`]
                                           }}
                                           modules={['geoObject.addon.balloon', 'geoObject.addon.hint']}
-                                          geometry={point.coordinate}
-                                          onClick={clickPlacemark}/>
-                    })}
-
-                    {placemarkObjects.map((point, index) => {
-                        return <Placemark key={index}
-                                          geometry={point.coordinate}
-                                          onClick={clickPlacemark}/>
+                                          geometry={point.coordinate}/>
                     })}
                 </Clusterer>
-                {/* control buttons */}
-                <ZoomControl options={{float: 'right'}}/>
-                <GeolocationControl options={{float: 'left'}}/>
-                <SearchControl options={{float: 'right'}}/>
+                <GeolocationControl/>
+                <LeftCards state={coordinates} onClickLeftCards={onClickLeftCards}/>
             </Map>
         </YMaps>
     )

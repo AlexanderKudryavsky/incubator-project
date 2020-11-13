@@ -3,6 +3,7 @@ import styles from './LeftCards.module.css'
 
 export function LeftCards(props) {
 
+
     const onClickLeftCards = (coordinates) => {
         props.onClickLeftCards(coordinates)
     }
@@ -23,7 +24,7 @@ export function LeftCards(props) {
     })
     return (
         <div className={styles.schoolsPanel}>
-            <div className={styles.titlePanel}>Schools:</div>
+            <div className={styles.titlePanel}>Schools: {props.title}</div>
             <div className={styles.schoolsList}>
                 <ul>
                     {schoolsList}
