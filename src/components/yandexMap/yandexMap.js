@@ -1,11 +1,11 @@
-import React, {useRef, useState} from 'react'
+import React, {useRef} from 'react'
 import style from './yandexMap.module.css'
 import {LeftCards} from "../LeftCards/LeftCards";
 import {Clusterer, GeolocationControl, Map, Placemark, SearchControl, YMaps, ZoomControl} from 'react-yandex-maps'
 
 export const YandexMap = () => {
 
-    const startStateMapZoom = useState({center: [42.50, -41.74], zoom: 3}) // Minsk
+    const startStateMapZoom = {center: [42.50, -41.74], zoom: 3} // Minsk
 
     const coordinates = [
         {
