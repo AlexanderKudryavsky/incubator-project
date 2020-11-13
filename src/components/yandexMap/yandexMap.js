@@ -12,9 +12,7 @@ import style from './yandexMap.module.css'
 
 export const YandexMap = () => {
 
-    const modules = ['layout.ImageWithContent', 'GeoObjectCollection', 'Placemark']
-
-    const [startStateMapZoom, setStartStateMapZoom] = useState({center: [42.50, -27.74], zoom: 3}) // Minsk
+    const startStateMapZoom = {center: [42.50, -41.74], zoom: 3} // Minsk
 
     const coordinates = [
         {
@@ -56,6 +54,16 @@ export const YandexMap = () => {
     const clickPlacemark = () => {
         console.log('Clicked')
     }
+
+    const mapp = useRef()
+
+    const onClickLeftCards = (coordinates) => {
+        console.log(mapp.current.panTo)
+        mapp.current.panTo(coordinates, {flying: 1})
+
+
+    }
+
 
     const [map, setMap] = useState({})
     const [panelOpen, setPanelOpen] = useState(false)
@@ -178,8 +186,17 @@ export const YandexMap = () => {
     }
 
     return (
-        <YMaps>
+        <YMaps enterprise
+               query={{apikey: '1c7f4567-d722-4829-8b8c-6dae4d41a40c'}}>
+            <LeftCards state={coordinates} onClickLeftCards={onClickLeftCards}/>
             <Map state={startStateMapZoom}
+                 className={`${style.container} ${style.yMaps_layers_pane}`}
+                 options={{flying: 1}}
+                 instanceRef={mapp}
+
+            >
+
+
                  className={style.container}
                  modules={modules}
                  onLoad={(api) => ymaps.current = api}
@@ -205,14 +222,36 @@ export const YandexMap = () => {
                         preset: 'islands#invertedVioletClusterIcons',
                         groupByCoordinates: false
                     }}>
+
+
+                    {/* applied placemarks */}
+                    {coordinates.map((point, index) => {
+                        const schoolBalloon =
+                            `<div id="menu">\
+                                            <h3 class="titleInfo">${point.title}</h3>\
+                                        <div>Address: ${point.city}, ${point.country}</div>
+                                        <div>Mode: ${point.workTime}</div>
+                                        <div>${point.description}</div>
+                                    </div>`
+                        return <Placemark key={index}
+                                          properties={{
+                                              balloonContent: [`${schoolBalloon}`]
+                                          }}
+                                          modules={['geoObject.addon.balloon', 'geoObject.addon.hint']}
+                                          geometry={point.coordinate}
+                                          onClick={clickPlacemark}/>
+                    })}
+
                     {placemarkObjects.map((point, index) => {
                         return <Placemark key={index}
                                           geometry={point.coordinate}
                                           onClick={clickPlacemark}/>
                     })}
                 </Clusterer>
-                <GeolocationControl/>
-                {/*<LeftCards coordinates={coordinates}/>*/}
+                {/* control buttons */}
+                <ZoomControl options={{float: 'right'}}/>
+                <GeolocationControl options={{float: 'left'}}/>
+                <SearchControl options={{float: 'right'}}/>
             </Map>
         </YMaps>
     )
