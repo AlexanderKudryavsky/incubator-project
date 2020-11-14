@@ -1,5 +1,14 @@
 import React, {useRef, useState} from 'react'
-import {Clusterer, GeolocationControl, Map, Placemark, SearchControl, YMaps, ZoomControl} from 'react-yandex-maps'
+import {
+    Clusterer,
+    GeolocationControl,
+    Map,
+    Placemark,
+    RoutePanel,
+    SearchControl,
+    YMaps,
+    ZoomControl
+} from 'react-yandex-maps'
 import {AddPlacemarkForm} from '../AddPlacemarkForm/AddPlacemarkForm'
 import style from './yandexMap.module.css'
 import {LeftCards} from '../LeftCards/LeftCards'
@@ -218,6 +227,7 @@ export const YandexMap = () => {
                     })}
                 </Clusterer>
                 <GeolocationControl/>
+                <RoutePanel options={{float: 'right', autofocus: false}}/>
                 <LeftCards state={coordinates} onClickLeftCards={onClickLeftCards}/>
             </Map>
         </YMaps>
