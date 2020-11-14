@@ -226,7 +226,7 @@ export const YandexMap = () => {
                     })}
                 </Clusterer>
                 <GeolocationControl/>
-                <LeftCards state={coordinates} onClickLeftCards={onClickLeftCards}/>
+                <LeftCards state={placemarkObjects} onClickLeftCards={onClickLeftCards}/>
             </Map>
         </YMaps>
     )
