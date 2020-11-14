@@ -4,17 +4,22 @@
     min-width: 150px;
     z-index: 5;
     color: white;
-    font-family: Arial;
+    font-family: Arial, serif;
     height: 60%;
     padding-top: 30px;
+    margin-left: 30px;
 }
 
-.schoolsPanel .schoolsList{
+.schoolsPanel .schoolsList {
     overflow-y: auto;
     height: 100%;
 }
 
 .schoolsList::-webkit-scrollbar { width: 0; }
+
+.schoolsList {
+    margin-right: -90px;
+}
 
 .schoolTitle{
     background-color: #333333;
