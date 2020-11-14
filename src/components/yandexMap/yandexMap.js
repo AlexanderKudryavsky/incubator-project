@@ -12,6 +12,7 @@ import {
 import {AddPlacemarkForm} from '../AddPlacemarkForm/AddPlacemarkForm'
 import style from './yandexMap.module.css'
 import {LeftCards} from '../LeftCards/LeftCards'
+import {ConfirmationWindow} from "../ConfirmationWindow/ConfirmationWindow";
 
 export const YandexMap = () => {
 
@@ -58,8 +59,9 @@ export const YandexMap = () => {
     const [placemarkObjects, setPlacemarkObjects] = useState(coordinates)
     const [newPlacemarkCoordinates, setNewPlacemarkCoordinates] = useState([])
     const [startStateMapZoom, setStartStateMapZoom] = useState({center: [42.50, -27.74], zoom: 3}) // Minsk
-
     const modules = ['layout.ImageWithContent', 'GeoObjectCollection', 'Placemark']
+    const [positionConfWindow, setPositionConfWindow] = useState([]);
+    const [positionConfWindowOpen, setPositionConfWindowOpen] = useState(false)
 
     const onClickLeftCards = (coordinates) => {
         map.current.panTo(coordinates, {flying: 1})
@@ -67,13 +69,18 @@ export const YandexMap = () => {
 
     const openPanelControl = () => !panelOpen && setPanelOpen(!panelOpen)
 
-    const addPlacemarkCoordinates = (e) => {
-        openPanelControl()
-        const position = e.get('coords')
+    const openConfirmationWindow = (e) => {
+        if(panelOpen) {
+            return ;
+        }
+        const position = e.get('coords');
+        const windowPosition = e.get('clientPixels');
+        setPositionConfWindow(windowPosition);
         setNewPlacemarkCoordinates(position)
+        setPositionConfWindowOpen(!positionConfWindowOpen);
     }
 
-    const addPlacemark = (coordinates, country, city, title, description, workTime) => {
+    const addPlacemark = ({coordinates, country, city, title, description, workTime}) => {
         let newPlacemark = {
             coordinate: coordinates,
             country: country,
@@ -190,7 +197,7 @@ export const YandexMap = () => {
                  onLoad={(api) => ymaps.current = api}
                  features={dataConvert(coordinates)}
                  instanceRef={map}
-                 onContextMenu={addPlacemarkCoordinates}>
+                 onContextMenu={openConfirmationWindow}>
                 <SearchControl options={{
                     float: 'left',
                     maxWidth: 190,
@@ -199,6 +206,10 @@ export const YandexMap = () => {
                     resultsPerPage: 5
                 }}/>
                 <ZoomControl options={{float: 'right'}}/>
+                {positionConfWindowOpen && <ConfirmationWindow openPanelControl={openPanelControl}
+                                                               setPositionConfWindow={setPositionConfWindowOpen}
+                                                               positionConfWindow = {positionConfWindow}
+                />}
                 <AddPlacemarkForm
                     panelOpen={panelOpen}
                     openPanelControl={setPanelOpen}

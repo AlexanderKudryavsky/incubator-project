@@ -16,17 +16,17 @@ const useStyles = makeStyles(({palette}) => ({
 }))
 
 export function AddPlacemarkForm(props) {
-    let panelOpen = props.panelOpen
+    let panelOpen = props.panelOpen;
 
-    const classes = useStyles()
+    const classes = useStyles();
+    const [country, setCountry] = useState('');
+    const [city, setCity] = useState('');
+    const [title, setTitle] = useState('');
+    const [workTime, setWorkTime] = useState('');
+    const [description, setDescription] = useState('');
 
-    const [country, setCountry] = useState('')
-    const [city, setCity] = useState('')
-    const [title, setTitle] = useState('')
-    const [workTime, setWorkTime] = useState('')
 
-
-    let coordinates = props.newPlacemarkCoordinates
+    let coordinates = props.newPlacemarkCoordinates;
 
     const onChangeCity = (e) => {
         const {value} = e.target
@@ -56,14 +56,19 @@ export function AddPlacemarkForm(props) {
         props.setNewPlacemarkCoordinates([coordinates[0], e.target.value])
     }
 
+    const onChangeDescription = (e) => {
+        const {value} = e.target;
+        setDescription(value);
+    }
 
     const handleDrawerOpen = () => {
-        props.addPlacemark(props.newPlacemarkCoordinates, country, city, title, workTime)
-        props.openPanelControl(!panelOpen)
-        setCity('')
-        setCountry('')
-        setTitle('')
-        setWorkTime('')
+        props.addPlacemark({coordinates, country, city, title, description,workTime});
+        props.openPanelControl(!panelOpen);
+        setCity('');
+        setCountry('');
+        setTitle('');
+        setWorkTime('');
+        setDescription('');
     }
 
 
@@ -87,6 +92,8 @@ export function AddPlacemarkForm(props) {
                             variant="filled"
                             value={coordinates[0] ? +coordinates[0] : 0}
                             onChange={onChangeLatitude}/>
+                    </ListItem>
+                    <ListItem>
                         <TextField
                             label="Number"
                             type="number"
@@ -121,7 +128,9 @@ export function AddPlacemarkForm(props) {
                             rowsMin={4}
                             rowsMax={15}
                             aria-label="maximum height"
-                            placeholder="Description"/>
+                            placeholder="Description"
+                            onChange={onChangeDescription}
+                        />
                     </ListItem>
                     <ListItem button onClick={handleDrawerOpen}>
                         <Button>ok</Button>
