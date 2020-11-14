@@ -3,11 +3,9 @@ import styles from './LeftCards.module.css'
 
 export function LeftCards(props) {
 
-
     const onClickLeftCards = (coordinates) => {
         props.onClickLeftCards(coordinates)
     }
-
 
     let schoolsList = props.state.map((s, i) => {
         return <li className={styles.schoolWrapper} key={i}>

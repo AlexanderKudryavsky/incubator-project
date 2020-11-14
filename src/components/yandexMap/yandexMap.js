@@ -1,21 +1,19 @@
 import React, {useRef, useState} from 'react'
 import {
-    Clusterer, GeolocationControl,
+    Clusterer,
+    GeolocationControl,
     Map,
     Placemark,
+    RoutePanel,
     SearchControl,
     YMaps,
     ZoomControl
 } from 'react-yandex-maps'
 import {AddPlacemarkForm} from '../AddPlacemarkForm/AddPlacemarkForm'
 import style from './yandexMap.module.css'
-import {LeftCards} from "../LeftCards/LeftCards";
+import {LeftCards} from '../LeftCards/LeftCards'
 
 export const YandexMap = () => {
-
-    const modules = ['layout.ImageWithContent', 'GeoObjectCollection', 'Placemark']
-
-    const [startStateMapZoom, setStartStateMapZoom] = useState({center: [42.50, -27.74], zoom: 3}) // Minsk
 
     const coordinates = [
         {
@@ -54,16 +52,17 @@ export const YandexMap = () => {
         }
     ]
 
+    const map = useRef()
+    const ymaps = useRef(null)
     const [panelOpen, setPanelOpen] = useState(false)
     const [placemarkObjects, setPlacemarkObjects] = useState(coordinates)
     const [newPlacemarkCoordinates, setNewPlacemarkCoordinates] = useState([])
-    const map = useRef()
+    const [startStateMapZoom, setStartStateMapZoom] = useState({center: [42.50, -27.74], zoom: 3}) // Minsk
+
+    const modules = ['layout.ImageWithContent', 'GeoObjectCollection', 'Placemark']
 
     const onClickLeftCards = (coordinates) => {
-        console.log(map.current.panTo)
         map.current.panTo(coordinates, {flying: 1})
-
-
     }
 
     const openPanelControl = () => !panelOpen && setPanelOpen(!panelOpen)
@@ -117,14 +116,13 @@ export const YandexMap = () => {
         return features
     }
 
-    const ymaps = useRef(null)
-
     class CustomSearchProvider {
         constructor(points) {
             this.points = points
         }
 
         geocode(request, options) {
+
             let deferred = ymaps.current && ymaps.current.vow.defer()
             let geoObjects = ymaps.current && new ymaps.current.GeoObjectCollection()
 
@@ -182,7 +180,10 @@ export const YandexMap = () => {
     }
 
     return (
-        <YMaps>
+        <YMaps enterprise
+               query={{
+                   apikey: '1c7f4567-d722-4829-8b8c-6dae4d41a40c\n'
+               }}>
             <Map state={startStateMapZoom}
                  className={style.container}
                  modules={modules}
@@ -191,7 +192,7 @@ export const YandexMap = () => {
                  instanceRef={map}
                  onContextMenu={addPlacemarkCoordinates}>
                 <SearchControl options={{
-                    float: 'right',
+                    float: 'left',
                     maxWidth: 190,
                     noPlacemark: true,
                     provider: new CustomSearchProvider(coordinates),
@@ -227,6 +228,8 @@ export const YandexMap = () => {
                 </Clusterer>
                 <GeolocationControl/>
                 <LeftCards state={placemarkObjects} onClickLeftCards={onClickLeftCards}/>
+                <RoutePanel options={{float: 'right', autofocus: false}}/>
+                <LeftCards state={coordinates} onClickLeftCards={onClickLeftCards}/>
             </Map>
         </YMaps>
     )
