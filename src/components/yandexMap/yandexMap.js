@@ -240,7 +240,7 @@ export const YandexMap = () => {
                 <GeolocationControl/>
                 <LeftCards state={placemarkObjects} onClickLeftCards={onClickLeftCards}/>
                 <RoutePanel options={{float: 'right', autofocus: false}}/>
-                <LeftCards state={coordinates} onClickLeftCards={onClickLeftCards}/>
+                {/*<LeftCards state={coordinates} onClickLeftCards={onClickLeftCards}/>*/}
             </Map>
         </YMaps>
     )

@@ -1,18 +1,22 @@
 .schoolsPanel {
     position: absolute;
+    bottom: 30px;
+    left: 65px;
     width: 15vw;
     min-width: 150px;
     z-index: 5;
     color: white;
     font-family: Arial, serif;
     height: 60%;
-    padding-top: 30px;
-    margin-left: 30px;
 }
 
 .schoolsPanel .schoolsList {
     overflow-y: auto;
     height: 100%;
+}
+
+.schoolsList ul {
+    padding: 0;
 }
 
 .schoolsList::-webkit-scrollbar { width: 0; }
