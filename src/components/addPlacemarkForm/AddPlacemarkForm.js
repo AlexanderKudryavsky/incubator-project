@@ -11,8 +11,11 @@ const useStyles = makeStyles(({palette}) => ({
         textDecoration: 'none',
         color: palette.text.primary
     },
-    hide: {display: 'none'}
-
+    hide: {display: 'none'},
+    buttonContainer: {
+        display: 'flex',
+        justifyContent: "space-evenly",
+    },
 }))
 
 export function AddPlacemarkForm(props) {
@@ -63,6 +66,15 @@ export function AddPlacemarkForm(props) {
 
     const handleDrawerOpen = () => {
         props.addPlacemark({coordinates, country, city, title, description, workTime})
+        props.openPanelControl(!panelOpen)
+        setCity('')
+        setCountry('')
+        setTitle('')
+        setWorkTime('')
+        setDescription('')
+    }
+
+    const closePanel = () => {
         props.openPanelControl(!panelOpen)
         setCity('')
         setCountry('')
@@ -130,10 +142,12 @@ export function AddPlacemarkForm(props) {
                             aria-label="maximum height"
                             placeholder="Description"
                             onChange={onChangeDescription}
+                            value={description}
                         />
                     </ListItem>
-                    <ListItem button onClick={handleDrawerOpen}>
-                        <Button>ok</Button>
+                    <ListItem className={classes.buttonContainer}>
+                        <Button onClick={handleDrawerOpen}>Ok</Button>
+                        <Button onClick={closePanel}>Cancel</Button>
                     </ListItem>
                 </List>
             </Drawer>

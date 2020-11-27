@@ -48,7 +48,7 @@ export function ConfirmationWindow(props) {
                 <Button className={classes.button} size="small" color="primary" onClick={openControlPanelHandler}>
                     Ok
                 </Button>
-                <Button className={classes.button} size="small" color="primary">
+                <Button className={classes.button} size="small" color="primary" onClick={() => props.setPositionConfWindow(false)}>
                     Cancel
                 </Button>
             </CardActions>
