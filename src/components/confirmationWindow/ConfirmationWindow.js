@@ -1,38 +1,35 @@
 import React from 'react'
-import {makeStyles} from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-import CardActionArea from "@material-ui/core/CardActionArea";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import Typography from "@material-ui/core/Typography";
-import CardActions from "@material-ui/core/CardActions";
-
+import {makeStyles} from '@material-ui/core/styles'
+import Button from '@material-ui/core/Button'
+import CardActionArea from '@material-ui/core/CardActionArea'
+import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/CardContent'
+import Typography from '@material-ui/core/Typography'
+import CardActions from '@material-ui/core/CardActions'
 
 export function ConfirmationWindow(props) {
     const useStyles = makeStyles({
         root: {
             textAlign: 'center',
             maxWidth: 345,
-            position: "absolute",
-            zIndex: 3010,
+            position: 'absolute',
+            zIndex: 3010
 
         },
         button: {
-            margin: '0 auto',
+            margin: '0 auto'
         },
         media: {
-            height: 140,
+            height: 140
 
-        },
-    });
-    const classes = useStyles();
+        }
+    })
+    const classes = useStyles()
 
     const openControlPanelHandler = () => {
-        props.setPositionConfWindow(false);
-        props.openPanelControl();
-
+        props.setPositionConfWindow(false)
+        props.openPanelControl()
     }
-
 
     return (
         <Card className={classes.root}
@@ -56,7 +53,7 @@ export function ConfirmationWindow(props) {
                 </Button>
             </CardActions>
         </Card>
-    );
+    )
 }
 
 

@@ -9,10 +9,10 @@ import {
     YMaps,
     ZoomControl
 } from 'react-yandex-maps'
-import {AddPlacemarkForm} from '../AddPlacemarkForm/AddPlacemarkForm'
+import {AddPlacemarkForm} from '../addPlacemarkForm/AddPlacemarkForm'
 import style from './yandexMap.module.css'
-import {LeftCards} from '../LeftCards/LeftCards'
-import {ConfirmationWindow} from "../ConfirmationWindow/ConfirmationWindow";
+import {LeftCards} from '../leftCards/LeftCards'
+import {ConfirmationWindow} from '../confirmationWindow/ConfirmationWindow'
 
 export const YandexMap = () => {
 
@@ -55,30 +55,13 @@ export const YandexMap = () => {
 
     const map = useRef()
     const ymaps = useRef(null)
+    const modules = ['layout.ImageWithContent', 'GeoObjectCollection', 'Placemark']
     const [panelOpen, setPanelOpen] = useState(false)
     const [placemarkObjects, setPlacemarkObjects] = useState(coordinates)
     const [newPlacemarkCoordinates, setNewPlacemarkCoordinates] = useState([])
     const [startStateMapZoom, setStartStateMapZoom] = useState({center: [42.50, -27.74], zoom: 3}) // Minsk
-    const modules = ['layout.ImageWithContent', 'GeoObjectCollection', 'Placemark']
-    const [positionConfWindow, setPositionConfWindow] = useState([]);
+    const [positionConfWindow, setPositionConfWindow] = useState([])
     const [positionConfWindowOpen, setPositionConfWindowOpen] = useState(false)
-
-    const onClickLeftCards = (coordinates) => {
-        map.current.panTo(coordinates, {flying: 1})
-    }
-
-    const openPanelControl = () => !panelOpen && setPanelOpen(!panelOpen)
-
-    const openConfirmationWindow = (e) => {
-        if(panelOpen) {
-            return ;
-        }
-        const position = e.get('coords');
-        const windowPosition = e.get('clientPixels');
-        setPositionConfWindow(windowPosition);
-        setNewPlacemarkCoordinates(position)
-        setPositionConfWindowOpen(!positionConfWindowOpen);
-    }
 
     const addPlacemark = ({coordinates, country, city, title, description, workTime}) => {
         let newPlacemark = {
@@ -100,19 +83,35 @@ export const YandexMap = () => {
         }
         let newArray = [...placemarkObjects, newPlacemark]
         setPlacemarkObjects(newArray)
-        setStartStateMapZoom({center: map.current.getCenter(), zoom: 3})
     }
 
-    const dataConvert = (routes) => {
+    const onClickLeftCards = (coordinates) => {
+        map.current.panTo(coordinates, {flying: 1})
+    }
+
+    const openConfirmationWindow = (e) => {
+        if (panelOpen) {
+            return
+        }
+        const position = e.get('coords')
+        const windowPosition = e.get('clientPixels')
+        setPositionConfWindow(windowPosition)
+        setNewPlacemarkCoordinates(position)
+        setPositionConfWindowOpen(!positionConfWindowOpen)
+    }
+
+    const openPanelControl = () => !panelOpen && setPanelOpen(!panelOpen)
+
+    // code for search input
+    const dataConvert = (coordinates) => {
         let features = []
-        routes &&
-        routes.map((route) => {
-            const lat = route.coordinate[0]
-            const lon = route.coordinate[1]
+        coordinates && coordinates.map((c) => {
+            const lat = c.coordinate[0]
+            const lon = c.coordinate[1]
             let tmpObj = {
                 type: 'Feature',
-                id: route.title,
-                route: route,
+                id: c.title,
+                route: c,
                 geometry: {
                     type: 'Point',
                     coordinates: [lat, lon]
@@ -139,7 +138,7 @@ export const YandexMap = () => {
             let points = []
             for (let i = 0, l = this.points.length; i < l; i++) {
                 let point = this.points[i]
-
+                debugger
                 if (point.title.toLowerCase().indexOf(request.toLowerCase()) !== -1) {
                     points.push(point)
                 }
@@ -151,14 +150,14 @@ export const YandexMap = () => {
             // Добавляем точки в результирующую коллекцию.
             for (let i = 0, l = points.length; i < l; i++) {
                 let point = points[i],
-                    coordinates = point.coordinates,
-                    routeId = point.title
+                    coordinates = point.coordinate,
+                    title = point.title
 
                 geoObjects.add(
                     new ymaps.current.Placemark(coordinates, {
-                        name: routeId,
+                        name: title,
                         description: `${point.country}, ${point.city}`,
-                        balloonContentBody: '<p>' + routeId + '</p>',
+                        balloonContentBody: `<p>${title}</p>`,
                         boundedBy: [coordinates, coordinates]
                     })
                 )
@@ -208,7 +207,7 @@ export const YandexMap = () => {
                 <ZoomControl options={{float: 'right'}}/>
                 {positionConfWindowOpen && <ConfirmationWindow openPanelControl={openPanelControl}
                                                                setPositionConfWindow={setPositionConfWindowOpen}
-                                                               positionConfWindow = {positionConfWindow}
+                                                               positionConfWindow={positionConfWindow}
                 />}
                 <AddPlacemarkForm
                     panelOpen={panelOpen}
@@ -240,7 +239,6 @@ export const YandexMap = () => {
                 <GeolocationControl/>
                 <LeftCards state={placemarkObjects} onClickLeftCards={onClickLeftCards}/>
                 <RoutePanel options={{float: 'right', autofocus: false}}/>
-                {/*<LeftCards state={coordinates} onClickLeftCards={onClickLeftCards}/>*/}
             </Map>
         </YMaps>
     )

@@ -16,17 +16,17 @@ const useStyles = makeStyles(({palette}) => ({
 }))
 
 export function AddPlacemarkForm(props) {
-    let panelOpen = props.panelOpen;
+    let panelOpen = props.panelOpen
 
-    const classes = useStyles();
-    const [country, setCountry] = useState('');
-    const [city, setCity] = useState('');
-    const [title, setTitle] = useState('');
-    const [workTime, setWorkTime] = useState('');
-    const [description, setDescription] = useState('');
+    const classes = useStyles()
+    const [country, setCountry] = useState('')
+    const [city, setCity] = useState('')
+    const [title, setTitle] = useState('')
+    const [workTime, setWorkTime] = useState('')
+    const [description, setDescription] = useState('')
 
 
-    let coordinates = props.newPlacemarkCoordinates;
+    let coordinates = props.newPlacemarkCoordinates
 
     const onChangeCity = (e) => {
         const {value} = e.target
@@ -57,18 +57,18 @@ export function AddPlacemarkForm(props) {
     }
 
     const onChangeDescription = (e) => {
-        const {value} = e.target;
-        setDescription(value);
+        const {value} = e.target
+        setDescription(value)
     }
 
     const handleDrawerOpen = () => {
-        props.addPlacemark({coordinates, country, city, title, description,workTime});
-        props.openPanelControl(!panelOpen);
-        setCity('');
-        setCountry('');
-        setTitle('');
-        setWorkTime('');
-        setDescription('');
+        props.addPlacemark({coordinates, country, city, title, description, workTime})
+        props.openPanelControl(!panelOpen)
+        setCity('')
+        setCountry('')
+        setTitle('')
+        setWorkTime('')
+        setDescription('')
     }
 
 
