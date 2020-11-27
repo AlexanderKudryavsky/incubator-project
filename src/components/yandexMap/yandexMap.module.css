@@ -1,5 +1,5 @@
 .container {
     height: 100vh;
     width: 100%;
-    filter: grayscale(1) invert(1) sepia(1) opacity(0.9);
+/*    filter: grayscale(1) invert(1) sepia(1) opacity(0.9);*/
 }
