@@ -25,7 +25,7 @@
     margin-right: -90px;
 }
 
-.schoolTitle{
+.schoolTitleBlack {
     background-color: #333333;
     display: flex;
     flex-direction: column;
@@ -35,6 +35,18 @@
     cursor: pointer;
     padding: 0.4vw;
 }
+
+.schoolTitleWhite {
+    background-color: #cddbc6;
+    display: flex;
+    flex-direction: column;
+    border-radius: 9px;
+    color: #515050;
+    border-bottom: black dashed 1px;
+    cursor: pointer;
+    padding: 0.4vw;
+}
+
 h3, h5 {
    font-family: '-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;' ;
     margin: auto;
@@ -45,18 +57,30 @@ h5 {
     font-size: 1vw;
 }
 
-.title{
+.titleBlack{
     color: #FFF0C0;
     font-size: 1.4rem;
     font-weight: bolder;
-
 }
-.direction{
+.titleWhite{
+    color: black;
+    font-size: 1.4rem;
+    font-weight: bolder;
+}
+.directionBlack{
     background-color: #333333;
     display: flex;
     flex-direction: column;
     border-radius: 9px;
     color: #AB9B7E;
+    padding: 10px;
+}
+.directionWhite{
+    background-color: #cddbc6;
+    display: flex;
+    flex-direction: column;
+    border-radius: 9px;
+    color: black;
     padding: 10px;
 }
 .schoolWrapper{

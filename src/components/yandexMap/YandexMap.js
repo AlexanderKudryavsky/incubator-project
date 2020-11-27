@@ -13,6 +13,10 @@ import {AddPlacemarkForm} from '../addPlacemarkForm/AddPlacemarkForm'
 import style from './yandexMap.module.css'
 import {LeftCards} from '../leftCards/LeftCards'
 import {ConfirmationWindow} from '../confirmationWindow/ConfirmationWindow'
+import {restoreState, saveState} from "../common/localStorage";
+import FormGroup from "@material-ui/core/FormGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
 
 export const YandexMap = () => {
 
@@ -57,13 +61,14 @@ export const YandexMap = () => {
     const ymaps = useRef(null)
     const modules = ['layout.ImageWithContent', 'GeoObjectCollection', 'Placemark']
     const [panelOpen, setPanelOpen] = useState(false)
-    const [placemarkObjects, setPlacemarkObjects] = useState(coordinates)
+    const [placemarkObjects, setPlacemarkObjects] = useState(!!localStorage.getItem('placeMark') && restoreState('placeMark', coordinates))
     const [newPlacemarkCoordinates, setNewPlacemarkCoordinates] = useState([])
     const [startStateMapZoom, setStartStateMapZoom] = useState({center: [42.50, -27.74], zoom: 3}) // Minsk
     const [positionConfWindow, setPositionConfWindow] = useState([])
     const [positionConfWindowOpen, setPositionConfWindowOpen] = useState(false)
     const [routeMode, setRouteMode] = useState(false)
     const [myPos, setMyPos] = useState();
+    const [darkMode, setDarkMode] = useState(!!localStorage.getItem('DarkMode') && restoreState('DarkMode', false))
 
     const getMyPosition = () => {
         let geolocationControlEl = map.current.controls.get(2)
@@ -75,17 +80,16 @@ export const YandexMap = () => {
 
     const getDirections = (coordinates) => {
 
-            let pannel = map.current.controls.get(1).routePanel;
-            pannel.options.set('adjustMapMargin', true);
-            pannel.state.set({
-                fromEnabled: true,
-                from: myPos ,
-                to: coordinates,
-                type: "auto"
-            });
+        let pannel = map.current.controls.get(1).routePanel;
+        pannel.options.set('adjustMapMargin', true);
+        pannel.state.set({
+            fromEnabled: true,
+            from: myPos,
+            to: coordinates,
+            type: "auto"
+        });
 
     }
-
 
 
     const addPlacemark = ({coordinates, country, city, title, description, workTime}) => {
@@ -105,6 +109,7 @@ export const YandexMap = () => {
             ]
         }
         let newArray = [...placemarkObjects, newPlacemark]
+        saveState('placeMark', newArray)
         setPlacemarkObjects(newArray)
     }
 
@@ -112,6 +117,11 @@ export const YandexMap = () => {
         map.current.panTo(coordinates, {flying: 1});
         getDirections(coordinates);
 
+    }
+
+    const changeMode = (value) => {
+        setDarkMode(value.target.checked)
+        saveState('DarkMode', value.target.checked)
     }
 
     const openConfirmationWindow = (e) => {
@@ -216,7 +226,7 @@ export const YandexMap = () => {
                    apikey: '1c7f4567-d722-4829-8b8c-6dae4d41a40c\n'
                }}>
             <Map state={startStateMapZoom}
-                 className={style.container}
+                 className={ darkMode ? style.containerBlack : style.containerWhite}
                  modules={modules}
                  onLoad={(api) => ymaps.current = api}
                  features={dataConvert(coordinates)}
@@ -261,9 +271,21 @@ export const YandexMap = () => {
                                           geometry={point.coordinate}/>
                     })}
                 </Clusterer>
-                <GeolocationControl onClick = {getMyPosition} />
-                <LeftCards state={placemarkObjects} onClickLeftCards={onClickLeftCards}/>
-                <RoutePanel options={{float: 'right', autofocus: false}} />
+                <GeolocationControl onClick={getMyPosition}/>
+                    <FormGroup className={style.switcher}>
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={darkMode}
+                                    onChange={changeMode}
+                                    color="primary"
+                                />
+                            }
+                            label="Dark mode"
+                        />
+                    </FormGroup>
+                <LeftCards state={placemarkObjects} onClickLeftCards={onClickLeftCards} darkMode={darkMode}/>
+                <RoutePanel options={{float: 'right', autofocus: false}}/>
             </Map>
         </YMaps>
     )
