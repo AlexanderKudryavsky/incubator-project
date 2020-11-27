@@ -17,7 +17,6 @@ export function LeftCards(props) {
                 <div className={styles.direction}>
                     <div>Country: {s.country}</div>
                     <div>City: {s.city}</div>
-                    <div>Rating: {s.rating.star}</div>
                 </div>
             </li>
         )

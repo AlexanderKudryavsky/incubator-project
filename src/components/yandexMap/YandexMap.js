@@ -63,17 +63,26 @@ export const YandexMap = () => {
     const [positionConfWindow, setPositionConfWindow] = useState([])
     const [positionConfWindowOpen, setPositionConfWindowOpen] = useState(false)
     const [routeMode, setRouteMode] = useState(false)
+    const [myPos, setMyPos] = useState();
+
+    const getMyPosition = () => {
+        let geolocationControlEl = map.current.controls.get(2)
+        geolocationControlEl.events.add('locationchange', function (event) {
+            setMyPos(event.get('position'));
+        })
+
+    }
 
     const getDirections = (coordinates) => {
-        if(routeMode){
+
             let pannel = map.current.controls.get(1).routePanel;
             pannel.options.set('adjustMapMargin', true);
             pannel.state.set({
                 fromEnabled: true,
+                from: myPos ,
                 to: coordinates,
                 type: "auto"
             });
-        }
 
     }
 
@@ -88,9 +97,7 @@ export const YandexMap = () => {
             title: title,
             description: description,
             workTime: workTime,
-            rating: {
-                star: 5
-            },
+
             social: [
                 {vk: ''},
                 {fb: ''},
@@ -254,9 +261,9 @@ export const YandexMap = () => {
                                           geometry={point.coordinate}/>
                     })}
                 </Clusterer>
-                <GeolocationControl />
+                <GeolocationControl onClick = {getMyPosition} />
                 <LeftCards state={placemarkObjects} onClickLeftCards={onClickLeftCards}/>
-                <RouteButton onClick={()=>setRouteMode(!routeMode)} options={{float: 'right', autofocus: false}} />
+                <RoutePanel options={{float: 'right', autofocus: false}} />
             </Map>
         </YMaps>
     )
