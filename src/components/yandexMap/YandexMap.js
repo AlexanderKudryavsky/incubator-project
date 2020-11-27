@@ -74,7 +74,6 @@ export const YandexMap = () => {
     }
 
     const getDirections = (coordinates) => {
-
             let pannel = map.current.controls.get(1).routePanel;
             pannel.options.set('adjustMapMargin', true);
             pannel.state.set({
@@ -83,7 +82,6 @@ export const YandexMap = () => {
                 to: coordinates,
                 type: "auto"
             });
-
     }
 
 
@@ -109,8 +107,6 @@ export const YandexMap = () => {
 
     const onClickLeftCards = (coordinates) => {
         map.current.panTo(coordinates, {flying: 1});
-        getDirections(coordinates);
-
     }
 
     const openConfirmationWindow = (e) => {
@@ -261,7 +257,7 @@ export const YandexMap = () => {
                     })}
                 </Clusterer>
                 <GeolocationControl onClick = {getMyPosition} />
-                <LeftCards state={placemarkObjects} onClickLeftCards={onClickLeftCards}/>
+                <LeftCards state={placemarkObjects} onClickLeftCards={onClickLeftCards} getDirections = {getDirections}/>
                 <RoutePanel options={{float: 'right', autofocus: false}} />
             </Map>
         </YMaps>

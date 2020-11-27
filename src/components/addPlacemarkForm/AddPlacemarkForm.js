@@ -4,8 +4,6 @@ import {Drawer, List, ListItem} from '@material-ui/core'
 import TextField from '@material-ui/core/TextField'
 import TextareaAutosize from '@material-ui/core/TextareaAutosize'
 import Button from '@material-ui/core/Button'
-import { MuiPickersUtilsProvider,KeyboardTimePicker} from "@material-ui/pickers";
-import DateFnsUtils from '@date-io/date-fns';
 
 const useStyles = makeStyles(({palette}) => ({
     drawerPaper: {width: 'inherit'},
@@ -37,7 +35,6 @@ export function AddPlacemarkForm(props) {
     const [country, setCountry] = useState('')
     const [city, setCity] = useState('')
     const [title, setTitle] = useState('')
-    // const [workTime, setWorkTime] = useState('')
     const [description, setDescription] = useState('')
     const [selectedDateFrom, setSelectedDateFrom] = useState('07:30');
     const [selectedDateTo, setSelectedDateTo] = useState('07:30');
@@ -62,11 +59,6 @@ export function AddPlacemarkForm(props) {
         setTitle(value)
     }
 
-    // const onChangeWorkTime = (e) => {
-    //     const {value} = e.target
-    //     setWorkTime(value)
-    // }
-
     const onChangeLatitude = (e) => {
         props.setNewPlacemarkCoordinates([e.target.value, coordinates[1]])
     }
@@ -86,7 +78,6 @@ export function AddPlacemarkForm(props) {
             return
         }
         let workTime = selectedDateFrom + ' - '+ selectedDateTo
-
         props.addPlacemark({coordinates, country, city, title, description, workTime})
         props.openPanelControl(!panelOpen)
         setCity('')
