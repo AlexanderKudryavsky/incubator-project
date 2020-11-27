@@ -13,12 +13,23 @@ import {AddPlacemarkForm} from '../addPlacemarkForm/AddPlacemarkForm'
 import style from './yandexMap.module.css'
 import {LeftCards} from '../leftCards/LeftCards'
 import {ConfirmationWindow} from '../confirmationWindow/ConfirmationWindow'
+import SpeechRecognition, {useSpeechRecognition} from 'react-speech-recognition'
+import Button from '@material-ui/core/Button'
 import {restoreState, saveState} from "../common/localStorage";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 
 export const YandexMap = () => {
+
+    const {transcript, resetTranscript} = useSpeechRecognition()
+
+    useEffect(() => {
+        const input = document.querySelector('.ymaps-2-1-77-searchbox-input__input')
+        if (input) {
+            input.value = transcript
+        }
+    }, [transcript])
 
     const coordinates = [
         {
@@ -73,23 +84,24 @@ export const YandexMap = () => {
     const getMyPosition = () => {
         let geolocationControlEl = map.current.controls.get(2)
         geolocationControlEl.events.add('locationchange', function (event) {
-            setMyPos(event.get('position'));
+            setMyPos(event.get('position'))
         })
 
     }
 
     const getDirections = (coordinates) => {
 
-        let pannel = map.current.controls.get(1).routePanel;
-        pannel.options.set('adjustMapMargin', true);
-        pannel.state.set({
-            fromEnabled: true,
-            from: myPos,
-            to: coordinates,
-            type: "auto"
-        });
+            let pannel = map.current.controls.get(1).routePanel;
+            pannel.options.set('adjustMapMargin', true);
+            pannel.state.set({
+                fromEnabled: true,
+                from: myPos ,
+                to: coordinates,
+                type: "auto"
+            });
 
     }
+
 
 
     const addPlacemark = ({coordinates, country, city, title, description, workTime}) => {
@@ -114,8 +126,8 @@ export const YandexMap = () => {
     }
 
     const onClickLeftCards = (coordinates) => {
-        map.current.panTo(coordinates, {flying: 1});
-        getDirections(coordinates);
+        map.current.panTo(coordinates, {flying: 1})
+        getDirections(coordinates)
 
     }
 
@@ -236,7 +248,7 @@ export const YandexMap = () => {
                     float: 'left',
                     maxWidth: 190,
                     noPlacemark: true,
-                    provider: new CustomSearchProvider(coordinates),
+                    provider: new CustomSearchProvider(placemarkObjects),
                     resultsPerPage: 5
                 }}/>
                 <ZoomControl options={{float: 'right'}}/>
@@ -271,6 +283,24 @@ export const YandexMap = () => {
                                           geometry={point.coordinate}/>
                     })}
                 </Clusterer>
+                <GeolocationControl onClick={getMyPosition}/>
+
+                <button style={{
+                    width: 90, height: 28, position: 'absolute',
+                    top: 11, left: 380, zIndex: 50,
+                    borderRadius: 2,
+                    backgroundColor: '#ffdb4d',
+                    border: 'none',
+                    outline: 'none'
+                }}
+                        onClick={SpeechRecognition.startListening}>
+                    Microphone
+                </button>
+
+                {/*    <button onClick={SpeechRecognition.stopListening}>Stop</button>*/}
+
+                <LeftCards state={placemarkObjects} onClickLeftCards={onClickLeftCards}/>
+                <RoutePanel options={{float: 'right', autofocus: false}}/>
                 <GeolocationControl onClick={getMyPosition}/>
                     <FormGroup className={style.switcher}>
                         <FormControlLabel
