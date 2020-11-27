@@ -97,7 +97,6 @@ export const YandexMap = () => {
             title: title,
             description: description,
             workTime: workTime,
-
             social: [
                 {vk: ''},
                 {fb: ''},
