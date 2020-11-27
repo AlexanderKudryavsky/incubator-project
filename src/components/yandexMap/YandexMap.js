@@ -3,7 +3,7 @@ import {
     Clusterer,
     GeolocationControl,
     Map,
-    Placemark,
+    Placemark, RouteButton,
     RoutePanel,
     SearchControl,
     YMaps,
@@ -62,6 +62,22 @@ export const YandexMap = () => {
     const [startStateMapZoom, setStartStateMapZoom] = useState({center: [42.50, -27.74], zoom: 3}) // Minsk
     const [positionConfWindow, setPositionConfWindow] = useState([])
     const [positionConfWindowOpen, setPositionConfWindowOpen] = useState(false)
+    const [routeMode, setRouteMode] = useState(false)
+
+    const getDirections = (coordinates) => {
+        if(routeMode){
+            let pannel = map.current.controls.get(1).routePanel;
+            pannel.options.set('adjustMapMargin', true);
+            pannel.state.set({
+                fromEnabled: true,
+                to: coordinates,
+                type: "auto"
+            });
+        }
+
+    }
+
+
 
     const addPlacemark = ({coordinates, country, city, title, description, workTime}) => {
         let newPlacemark = {
@@ -86,7 +102,9 @@ export const YandexMap = () => {
     }
 
     const onClickLeftCards = (coordinates) => {
-        map.current.panTo(coordinates, {flying: 1})
+        map.current.panTo(coordinates, {flying: 1});
+        getDirections(coordinates);
+
     }
 
     const openConfirmationWindow = (e) => {
@@ -236,9 +254,9 @@ export const YandexMap = () => {
                                           geometry={point.coordinate}/>
                     })}
                 </Clusterer>
-                <GeolocationControl/>
+                <GeolocationControl />
                 <LeftCards state={placemarkObjects} onClickLeftCards={onClickLeftCards}/>
-                <RoutePanel options={{float: 'right', autofocus: false}}/>
+                <RouteButton onClick={()=>setRouteMode(!routeMode)} options={{float: 'right', autofocus: false}} />
             </Map>
         </YMaps>
     )
