@@ -204,6 +204,7 @@ export const YandexMap = () => {
     }
 
     return (
+        <>
         <YMaps enterprise
                query={{
                    apikey: '1c7f4567-d722-4829-8b8c-6dae4d41a40c\n'
@@ -255,9 +256,13 @@ export const YandexMap = () => {
                     })}
                 </Clusterer>
                 <GeolocationControl />
+                <div style={{ position: 'absolute', top: 15, left: 380, zIndex: 50 }}>
+                    <button>voice</button>
+                </div>
                 <LeftCards state={placemarkObjects} onClickLeftCards={onClickLeftCards}/>
                 <RouteButton onClick={()=>setRouteMode(!routeMode)} options={{float: 'right', autofocus: false}} />
             </Map>
         </YMaps>
+            </>
     )
 }
