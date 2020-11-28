@@ -26,8 +26,7 @@ export function LeftCards(props) {
                         <div>City: {s.city}</div>
                     </div>
                     <div onClick={() => getDirections(s.coordinate)} className="button_cont" align="center">
-                        <a className={styles.example_e} rel="nofollow noopener">Add Call to
-                            Action</a>
+                        <a className={styles.example_e} rel="nofollow noopener">Get directions</a>
                     </div>
 
                 </div>
