@@ -14,7 +14,6 @@ import style from './yandexMap.module.css'
 import {LeftCards} from '../leftCards/LeftCards'
 import {ConfirmationWindow} from '../confirmationWindow/ConfirmationWindow'
 import SpeechRecognition, {useSpeechRecognition} from 'react-speech-recognition'
-import Button from '@material-ui/core/Button'
 import {restoreState, saveState} from "../common/localStorage";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -77,7 +76,6 @@ export const YandexMap = () => {
     const [startStateMapZoom, setStartStateMapZoom] = useState({center: [42.50, -27.74], zoom: 3}) // Minsk
     const [positionConfWindow, setPositionConfWindow] = useState([])
     const [positionConfWindowOpen, setPositionConfWindowOpen] = useState(false)
-    const [routeMode, setRouteMode] = useState(false)
     const [myPos, setMyPos] = useState();
     const [darkMode, setDarkMode] = useState(!!localStorage.getItem('DarkMode') && restoreState('DarkMode', false))
 
@@ -284,24 +282,12 @@ export const YandexMap = () => {
                     })}
                 </Clusterer>
                 <GeolocationControl onClick={getMyPosition}/>
-
-                <button style={{
-                    width: 90, height: 28, position: 'absolute',
-                    top: 11, left: 380, zIndex: 50,
-                    borderRadius: 2,
-                    backgroundColor: '#ffdb4d',
-                    border: 'none',
-                    outline: 'none'
-                }}
-                        onClick={SpeechRecognition.startListening}>
-                    Microphone
-                </button>
-
-                {/*    <button onClick={SpeechRecognition.stopListening}>Stop</button>*/}
-
-                {/*<LeftCards state={placemarkObjects} onClickLeftCards={onClickLeftCards}/>*/}
-                {/*<RoutePanel options={{float: 'right', autofocus: false}}/>*/}
-                {/*<GeolocationControl onClick={getMyPosition}/>*/}
+                <div className={style.microWrapper} onClick={SpeechRecognition.startListening}>
+                    <button id="speech" className={style.btn}>
+                        <i className="fa fa-microphone" aria-hidden="true"></i>
+                        <div className={style.pulseRing}></div>
+                    </button>
+                </div>
                     <FormGroup className={style.switcher}>
                         <FormControlLabel
                             control={

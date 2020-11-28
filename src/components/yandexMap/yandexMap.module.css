@@ -11,6 +11,65 @@
 .switcher {
     position: absolute;
     z-index: 5;
-    left: 92vw;
-    top: 92vh;
+    right: 40px;
+    bottom: 40px;
 }
+
+.btn {
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 100%;
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    color: black;
+    padding: 0;
+    margin: 0;
+    background: #ffdb4d;
+    position: relative;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    z-index: 50;
+    background-image: none;
+}
+
+.microWrapper {
+    position: absolute;
+    left: 380px;
+    top: 11px;
+    z-index: 60;
+}
+
+.pulseRing {
+    content: '';
+    width: 28px;
+    height: 28px;
+    border: 5px solid #ffdb4d;
+    border-radius: 50%;
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    animation: pulsate infinite 2s;
+}
+
+@-webkit-keyframes pulsate {
+    0% {
+        -webkit-transform: scale(1, 1);
+        opacity: 1;
+    }
+    100% {
+        -webkit-transform: scale(1.2, 1.2);
+        opacity: 0;
+    }
+}
+
