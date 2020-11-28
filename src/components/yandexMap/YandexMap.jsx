@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import {
     Clusterer,
     GeolocationControl,
@@ -72,7 +72,7 @@ export const YandexMap = () => {
     const ymaps = useRef(null)
     const modules = ['layout.ImageWithContent', 'GeoObjectCollection', 'Placemark']
     const [panelOpen, setPanelOpen] = useState(false)
-    const [placemarkObjects, setPlacemarkObjects] = useState(!!localStorage.getItem('placeMark') && restoreState('placeMark', coordinates))
+    const [placemarkObjects, setPlacemarkObjects] = useState(!!localStorage.getItem('placeMark')? restoreState('placeMark', coordinates) : coordinates)
     const [newPlacemarkCoordinates, setNewPlacemarkCoordinates] = useState([])
     const [startStateMapZoom, setStartStateMapZoom] = useState({center: [42.50, -27.74], zoom: 3}) // Minsk
     const [positionConfWindow, setPositionConfWindow] = useState([])
@@ -299,9 +299,9 @@ export const YandexMap = () => {
 
                 {/*    <button onClick={SpeechRecognition.stopListening}>Stop</button>*/}
 
-                <LeftCards state={placemarkObjects} onClickLeftCards={onClickLeftCards}/>
-                <RoutePanel options={{float: 'right', autofocus: false}}/>
-                <GeolocationControl onClick={getMyPosition}/>
+                {/*<LeftCards state={placemarkObjects} onClickLeftCards={onClickLeftCards}/>*/}
+                {/*<RoutePanel options={{float: 'right', autofocus: false}}/>*/}
+                {/*<GeolocationControl onClick={getMyPosition}/>*/}
                     <FormGroup className={style.switcher}>
                         <FormControlLabel
                             control={
@@ -314,7 +314,7 @@ export const YandexMap = () => {
                             label="Dark mode"
                         />
                     </FormGroup>
-                <LeftCards state={placemarkObjects} onClickLeftCards={onClickLeftCards} darkMode={darkMode}/>
+                <LeftCards state={placemarkObjects} onClickLeftCards={onClickLeftCards} darkMode={darkMode} getDirections={getDirections}/>
                 <RoutePanel options={{float: 'right', autofocus: false}}/>
             </Map>
         </YMaps>
