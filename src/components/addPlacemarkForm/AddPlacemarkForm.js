@@ -16,19 +16,29 @@ const useStyles = makeStyles(({palette}) => ({
         display: 'flex',
         justifyContent: "space-evenly",
     },
+    error: {
+        border: '4px solid red',
+        color: 'red',
+        fontWeight: 'bold',
+        borderRadius: '10px'
+
+    },
+    textField: {
+        fontWeight: 'bold',
+        margin: '0 auto',
+    }
 }))
 
 export function AddPlacemarkForm(props) {
     let panelOpen = props.panelOpen
-
     const classes = useStyles()
     const [country, setCountry] = useState('')
     const [city, setCity] = useState('')
     const [title, setTitle] = useState('')
-    const [workTime, setWorkTime] = useState('')
     const [description, setDescription] = useState('')
-
-
+    const [selectedDateFrom, setSelectedDateFrom] = useState('07:30');
+    const [selectedDateTo, setSelectedDateTo] = useState('07:30');
+    const [error, setError] = useState(false)
     let coordinates = props.newPlacemarkCoordinates
 
     const onChangeCity = (e) => {
@@ -42,13 +52,11 @@ export function AddPlacemarkForm(props) {
     }
 
     const onChangeTitle = (e) => {
+        if(title){
+            setError(false);
+        }
         const {value} = e.target
         setTitle(value)
-    }
-
-    const onChangeWorkTime = (e) => {
-        const {value} = e.target
-        setWorkTime(value)
     }
 
     const onChangeLatitude = (e) => {
@@ -65,12 +73,18 @@ export function AddPlacemarkForm(props) {
     }
 
     const handleDrawerOpen = () => {
+        if( !title) {
+            setError(true)
+            return
+        }
+        let workTime = selectedDateFrom + ' - '+ selectedDateTo
         props.addPlacemark({coordinates, country, city, title, description, workTime})
         props.openPanelControl(!panelOpen)
         setCity('')
         setCountry('')
         setTitle('')
-        setWorkTime('')
+        setSelectedDateFrom('07:30')
+        setSelectedDateTo('07:30')
         setDescription('')
     }
 
@@ -79,10 +93,18 @@ export function AddPlacemarkForm(props) {
         setCity('')
         setCountry('')
         setTitle('')
-        setWorkTime('')
+        setSelectedDateFrom('07:30')
+        setSelectedDateTo('07:30')
         setDescription('')
+        setError(false)
     }
 
+    const handleDateChangeFrom = (e) => {
+        setSelectedDateFrom(e.currentTarget.value);
+    };
+    const handleDateChangeTo = (e) => {
+        setSelectedDateTo(e.currentTarget.value);
+    };
 
     return (
         <div style={{display: 'flex'}}>
@@ -96,7 +118,7 @@ export function AddPlacemarkForm(props) {
                 <List>
                     <ListItem>
                         <TextField
-                            label="Number"
+                            label="Latitude"
                             type="number"
                             InputLabelProps={{
                                 shrink: true
@@ -107,7 +129,7 @@ export function AddPlacemarkForm(props) {
                     </ListItem>
                     <ListItem>
                         <TextField
-                            label="Number"
+                            label="Longitude"
                             type="number"
                             InputLabelProps={{
                                 shrink: true
@@ -117,23 +139,54 @@ export function AddPlacemarkForm(props) {
                             onChange={onChangeLongitude}/>
                     </ListItem>
                     <ListItem>
-                        <TextField value={country} onChange={onChangeCountry} id="outlined-basic" label="Country"
+                        <TextField className={error && classes.error} value={country} onChange={onChangeCountry} id="outlined-basic" label={error ? "Enter Country" : "Country"}
                                    variant="outlined"/>
                     </ListItem>
                     <ListItem>
-                        <TextField value={city} onChange={onChangeCity} id="outlined-basic" label="City"
+                        <TextField className={error && classes.error} value={city} onChange={onChangeCity} id="outlined-basic" label={error ? "Enter City" : "City"}
                                    variant="outlined"/>
                     </ListItem>
                     <ListItem>
-                        <TextField value={title} onChange={onChangeTitle} id="outlined-basic" label="Title"
+                        <TextField className={error && classes.error} value={title} onChange={onChangeTitle} id="outlined-basic" label={error ? "Enter Title" : "Title"}
                                    variant="outlined"/>
                     </ListItem>
-                    <ListItem>
+                    <ListItem >
+                        <div className={classes.textField}>Working hours</div>
+
                     </ListItem>
-                    <ListItem>
-                        <TextField value={workTime} onChange={onChangeWorkTime} id="outlined-basic"
-                                   label="Work-time" variant="outlined"/>
+                    <ListItem className={classes.buttonContainer}>
+                        <TextField
+                            id="time"
+                            label="From"
+                            type="time"
+                            defaultValue="07:30"
+                            className={classes.textField}
+                            value={selectedDateFrom}
+                            onChange={handleDateChangeFrom}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            inputProps={{
+                                step: 300, // 5 min
+                            }}
+                        />
+                        <TextField
+                            id="time"
+                            label="To"
+                            type="time"
+                            defaultValue="20:00"
+                            className={classes.textField}
+                            value={selectedDateTo}
+                            onChange={handleDateChangeTo}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            inputProps={{
+                                step: 300, // 5 min
+                            }}
+                        />
                     </ListItem>
+
                     <ListItem>
                         <TextareaAutosize
                             style={{width: '210px', margin: '0 auto'}}
@@ -154,5 +207,6 @@ export function AddPlacemarkForm(props) {
         </div>
     )
 }
+
 
 
