@@ -21,6 +21,8 @@ import Switch from "@material-ui/core/Switch";
 
 export const YandexMap = () => {
 
+    const [isListening, setIsListening] = useState(false)
+
     const {transcript, resetTranscript} = useSpeechRecognition()
 
     useEffect(() => {
@@ -230,6 +232,16 @@ export const YandexMap = () => {
         }
     }
 
+    const startRecording = () => {
+        SpeechRecognition.startListening()
+        setIsListening(true);
+    };
+
+    const stopRecording = () => {
+        SpeechRecognition.stopListening()
+        setIsListening(false)
+    }
+
     return (
         <YMaps enterprise
                query={{
@@ -282,12 +294,16 @@ export const YandexMap = () => {
                     })}
                 </Clusterer>
                 <GeolocationControl onClick={getMyPosition}/>
-                <div className={style.microWrapper} onClick={SpeechRecognition.startListening}>
+                {isListening ? <div className={style.microWrapper} onClick={stopRecording}>
                     <button id="speech" className={style.btn}>
                         <i className="fa fa-microphone" aria-hidden="true"></i>
                         <div className={style.pulseRing}></div>
                     </button>
-                </div>
+                </div> : <div className={style.microWrapper} onClick={startRecording}>
+                    <button id="speech" className={style.btn}>
+                        <i className="fa fa-microphone" aria-hidden="true"></i>
+                    </button>
+                </div>}
                     <FormGroup className={style.switcher}>
                         <FormControlLabel
                             control={
