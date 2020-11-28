@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import {
     Clusterer,
     GeolocationControl,
@@ -299,9 +299,9 @@ export const YandexMap = () => {
 
                 {/*    <button onClick={SpeechRecognition.stopListening}>Stop</button>*/}
 
-                <LeftCards state={placemarkObjects} onClickLeftCards={onClickLeftCards}/>
-                <RoutePanel options={{float: 'right', autofocus: false}}/>
-                <GeolocationControl onClick={getMyPosition}/>
+                {/*<LeftCards state={placemarkObjects} onClickLeftCards={onClickLeftCards}/>*/}
+                {/*<RoutePanel options={{float: 'right', autofocus: false}}/>*/}
+                {/*<GeolocationControl onClick={getMyPosition}/>*/}
                     <FormGroup className={style.switcher}>
                         <FormControlLabel
                             control={
